@@ -6,7 +6,7 @@ namespace Monopoly_DesignPatternA4
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Test");
         }
     }
 }
