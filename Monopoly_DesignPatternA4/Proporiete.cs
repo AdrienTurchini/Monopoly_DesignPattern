@@ -9,6 +9,7 @@ namespace Monopoly_DesignPatternA4
 
     string nom;
     int prix;
+    int valeurHypotheque;
 
     bool estAchetee;
     Joueur proprietaire;
@@ -42,13 +43,15 @@ namespace Monopoly_DesignPatternA4
     #endregion
 
     #region Constructeurs
+
     // Constructeur rue
-    public Proporiete(Case precedente, Case suivante, string nom, int prix, int prixMaison, int loyerSimple, int loyer1Maison, int loyer2Maisons, int loyer3Maisons, int loyer4Maisons, int loyerHotel)
+    public Proporiete(Case precedente, Case suivante, string nom, int prix, int valeurHypotheque, int prixMaison, int loyerSimple, int loyer1Maison, int loyer2Maisons, int loyer3Maisons, int loyer4Maisons, int loyerHotel)
     {
       this.precedente = precedente;
       this.suivante = suivante;
       this.nom = nom;
       this.prix = prix;
+      this.valeurHypotheque = valeurHypotheque;
       this.prixMaison = prixMaison;
       this.loyerSimple = loyerSimple;
       this.loyer1Maison = loyer1Maison;
@@ -66,12 +69,13 @@ namespace Monopoly_DesignPatternA4
     }
 
     // Constructeur gare ou compagnie
-    public Proporiete(bool estGare, bool estCompagnie, Case precedente, Case suivante, string nom, int prix)
+    public Proporiete(bool estGare, bool estCompagnie, Case precedente, Case suivante, string nom, int prix, int valeurHypotheque)
     {
       this.precedente = precedente;
       this.suivante = suivante;
       this.nom = nom;
       this.prix = prix;
+      this.valeurHypotheque = valeurHypotheque;
       estHypothequee = false;
       estAchetee = false;
       proprietaire = null;
@@ -137,10 +141,21 @@ namespace Monopoly_DesignPatternA4
     #endregion
 
     #region Méthodes
-    public override string Action()
+
+    public override string ToString()
     {
-      return " ";
+      string myString;
+      myString = "Nom : " + nom + " prix : " + prix + " valeur hypothèque : " + valeurHypotheque + " est Acheté : " + estAchetee + " propiétaire de la carte : " + proprietaire + " est hypothequée : " + estHypothequee;
+      if (estGare == true)
+        myString += " loyer 1 gare : " + loyer1gare + " loyer 2 gares : " + loyer2gares + " loyer 3 gares : " + loyer3gares + " loyer 4 gares : " + loyer4gares;
+      else if (estCompagnie == true)
+        myString += " coefficient Loyer 1 compagnie : " + coefficientLoyer1Carte + " coefficient loyer 2 compagnie : " + coefficientLoyer2Cartes;
+      else
+        myString += " prix d'une maison : " + prixMaison + " loyer simple : " + loyerSimple + " loyer 1 maison : " + Loyer1Maison + " loyer 2 maisons : " + loyer2Maisons + " loyer 3 maisons : " + loyer3Maisons + " loyer 4 maisons : " + loyer4Maisons + " loyer hotel : " + loyerHotel + "possède une maison : " + possedeUneMaison + " possede un hotel : " + possedeUnHotel + " nombre de maisons sur la propriétés : " + nbMaisons;
+      return myString;
     }
+
+
     #endregion
   }
 }

@@ -9,8 +9,6 @@ namespace Monopoly_DesignPatternA4
     public abstract Case Suivante { get; set; }
     #endregion
 
-    #region methodes
-    abstract public string Action();
-    #endregion
+   
   }
 }
