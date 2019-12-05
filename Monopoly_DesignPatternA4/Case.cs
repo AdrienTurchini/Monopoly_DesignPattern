@@ -14,9 +14,16 @@ namespace Monopoly_DesignPatternA4
         public abstract int getLoyer3Maison();
         public abstract int getLoyer4Maison();
         public abstract int getHotel();
+    public abstract int getNombreDeMaisons();
 
         public abstract bool getEstGare();
         public abstract bool getEstCompagnie();
+        public abstract bool getEstAchetee();
+        public abstract void setEstAchetee(bool value);
+    public abstract bool getEstHypothequee();
+    public abstract void setEstHypothequee(bool value);
+    public abstract void setNombreDeMaisons(int nombreDeMaisons);
+    
         
 
 

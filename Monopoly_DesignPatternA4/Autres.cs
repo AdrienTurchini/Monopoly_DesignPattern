@@ -8,18 +8,11 @@ namespace Monopoly_DesignPatternA4
         private string nom;
         private int prix;
         private int valeurHypotheque;
-        private int prixMaison;
-        private int loyerSimple;
-        private int loyer1Maison;
-        private int loyer2Maisons;
-        private int loyer3Maisons;
-        private int loyer4Maisons;
-        private int loyerHotel;
 
 
 
-        // Constructeur gare
-        public Autres(string nom)
+    // Constructeur gare
+    public Autres(string nom)
         {
             this.nom = nom;
         }
@@ -87,6 +80,32 @@ namespace Monopoly_DesignPatternA4
         {
             return "nom : " + nom;
         }
+    public override bool getEstAchetee()
+    {
+      return false;
     }
+
+    public override void setEstAchetee(bool value)
+    {
+      // fonction inutile mais obligatoire
+    }
+    public override bool getEstHypothequee()
+    {
+      return false;
+    }
+    public override void setEstHypothequee(bool value)
+    {
+      // fonction inutile mais obligatoire
+    }
+    public override int getNombreDeMaisons()
+    {
+      return -1;
+    }
+
+    public override void setNombreDeMaisons(int nombreDeMaisons)
+    {
+      // fonction inutile mais obligatoire
+    }
+  }
 
 }

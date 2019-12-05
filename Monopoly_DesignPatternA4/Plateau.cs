@@ -8,7 +8,8 @@ namespace Monopoly_DesignPatternA4
     // variable locale static qui permet de referencer l'instance de ma classe soit le plateau
     private static Plateau monPlateau = null;
     private static readonly object myLock = new object();
-    public List<Case> mesCases;
+    private List<Case> mesCases;
+    private List<Joueur> lesJoueurs;
 
     // constructeur privé afin qu'une autre classe ne puisse pas instancier un plateau de jeu sans passer par la fonction publique
     //qui verifie qu'il n'y a qu'une seule instance (singleton)
@@ -180,6 +181,9 @@ namespace Monopoly_DesignPatternA4
       mesCases = mesCasesTemp;
       
     }
+
+    public List<Case> MesCases { get { return mesCases; } }
+    public List<Joueur> LesJoueurs { get { return lesJoueurs; } set { lesJoueurs = value; } }
 
 
 

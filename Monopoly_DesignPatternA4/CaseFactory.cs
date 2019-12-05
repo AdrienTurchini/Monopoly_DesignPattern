@@ -17,9 +17,6 @@ namespace Monopoly_DesignPatternA4
             {
                 return new Autres(nom);
             }
-          
-
-            
         }
 
 
