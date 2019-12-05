@@ -10,7 +10,7 @@ namespace Monopoly_ProjetFinal_DesignPattern
 
             Plateau plateau = Plateau.GetPlateau();
 
-            foreach (Case c in plateau.mesCases)
+            foreach (Case c in plateau.MesCases)
             {
                 Console.WriteLine(c.ToString());
 
