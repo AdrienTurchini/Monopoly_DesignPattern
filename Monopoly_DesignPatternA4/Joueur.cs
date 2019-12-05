@@ -8,13 +8,18 @@ namespace Monopoly_DesignPatternA4
     string nom;
     int argent;
     List<Case> mesCases;
-    int position; // 0 = case départ --> 40 = rue de la Paix
+    int position; // 0 = case départ --> 39 = rue de la Paix
+    bool enPrison;
+    int nombreDeDoublesAffilé;
 
 
     public Joueur(string nom)
     {
       this.nom = nom;
       argent = 1500;
+      position = 0;
+      enPrison = false;
+      nombreDeDoublesAffilé = 0;
     }
 
     public void Payer(int montant)
@@ -68,9 +73,9 @@ namespace Monopoly_DesignPatternA4
         Console.WriteLine("Vous n'avez pas de maisons sur cette propriété.");
     }
 
-  
-
-
-
+    public void GererProprietes()
+    {
+      // gestion 
+    }
   }
 }
