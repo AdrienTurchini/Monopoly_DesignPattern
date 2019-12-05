@@ -85,5 +85,9 @@ namespace Monopoly_DesignPatternA4
         {
             return false;
         }
+        public override string ToString()
+        {
+            return "Nom : " + nom + "Prix" + prix + " valeur hypothèque : " + valeurHypotheque;
+        }
     }
 }
