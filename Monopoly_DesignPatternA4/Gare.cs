@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 namespace Monopoly_DesignPatternA4
 {
-    public class Autres : Case
+    public class Gare:Case
     {
-
+        
 
         private string nom;
         private int prix;
@@ -17,11 +17,13 @@ namespace Monopoly_DesignPatternA4
         private int loyerHotel;
 
 
-
+        
         // Constructeur gare
-        public Autres(string nom)
+        public Gare(string nom)
         {
             this.nom = nom;
+            prix = 200;
+            valeurHypotheque = 100;
         }
         override
         public string getNom()
@@ -76,17 +78,12 @@ namespace Monopoly_DesignPatternA4
         override
         public bool getEstGare()
         {
-            return false;
+            return true;
         }
         override
         public bool getEstCompagnie()
         {
             return false;
         }
-        public override string ToString()
-        {
-            return "nom : " + nom;
-        }
     }
-
 }
