@@ -1,7 +1,7 @@
 using System;
 namespace Monopoly_DesignPatternA4
 {
-    public class Autres : Case
+    public class Autres : Case //Case départ, Parc gratuit, visite prison, aller en prison, caisse de communauté, chance, taxe
     {
 
 
@@ -10,9 +10,13 @@ namespace Monopoly_DesignPatternA4
         private int valeurHypotheque;
 
 
+<<<<<<< HEAD
 
     // Constructeur gare
     public Autres(string nom)
+=======
+        public Autres(string nom)
+>>>>>>> 3848d6b73ce14f2e13af766dcbd2845bd3a77b52
         {
             this.nom = nom;
         }
@@ -24,12 +28,12 @@ namespace Monopoly_DesignPatternA4
         override
         public int getPrix()
         {
-            return this.prix;
+            return -1;
         }
         override
         public int getHypotheque()
         {
-            return this.valeurHypotheque;
+            return -1;
         }
         override
         public int getPrixMaison()
@@ -78,7 +82,7 @@ namespace Monopoly_DesignPatternA4
         }
         public override string ToString()
         {
-            return "nom : " + nom;
+            return "Nom : " + nom;
         }
     public override bool getEstAchetee()
     {
