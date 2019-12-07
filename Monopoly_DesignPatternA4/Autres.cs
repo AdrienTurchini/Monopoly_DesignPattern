@@ -4,22 +4,29 @@ namespace Monopoly_DesignPatternA4
   public class Autres : Case //Case départ, Parc gratuit, visite prison, aller en prison, caisse de communauté, chance, taxe
   {
 
-
+    #region attributs
     private string nom;
-    private int prix;
-    private int valeurHypotheque;
+    private string famille;
 
+    #endregion
 
-
-
-    // Constructeur gare
+    #region constructeur
     public Autres(string nom)
     {
-
-
       this.nom = nom;
+      famille = "autres";
     }
+    #endregion
 
+    #region proprietes
+    public override Joueur getProprietaire()
+    {
+      return null;
+    }
+    public override void setProprietaire(Joueur joueur)
+    {
+      //
+    }
     override
     public string getNom()
     {
@@ -70,16 +77,6 @@ namespace Monopoly_DesignPatternA4
     {
       return -1;
     }
-    override
-    public bool getEstGare()
-    {
-      return false;
-    }
-    override
-    public bool getEstCompagnie()
-    {
-      return false;
-    }
     public override string ToString()
     {
       return "Nom : " + nom;
@@ -110,6 +107,12 @@ namespace Monopoly_DesignPatternA4
     {
       // fonction inutile mais obligatoire
     }
+
+    public override string getFamille()
+    {
+      return famille;
+    }
+    #endregion
   }
 
 }
