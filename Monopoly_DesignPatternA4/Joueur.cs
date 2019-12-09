@@ -379,7 +379,7 @@ namespace Monopoly_DesignPatternA4
           {
             Console.WriteLine("Cette carte est libre. Voici ses caractéristiques :");
             Console.WriteLine(position);
-            Console.WriteLine("Voulez-vous acheter cette carte ? Entrez Oui ou Non : ");
+            Console.WriteLine("\nVoulez-vous acheter cette carte ? Entrez Oui ou Non : ");
             string ouiOuNon = "";
             ouiOuNon = Console.ReadLine();
             while (ouiOuNon.ToLower() != "oui" && ouiOuNon.ToLower() != "non")
@@ -531,14 +531,44 @@ namespace Monopoly_DesignPatternA4
           Payer(150);
           plateau.ParcGrauit += 150;
         }
-        else if (plateau.State == "Caisse de Communauté")
+        else if (plateau.State == "Caisse de Communauté" || plateau.State == "Chance")
         {
-          // simulation de caisse de communauté
+          Random random = new Random();
+          int i = random.Next(6);
+          if(i == 0)
+          {
+            Console.WriteLine("Vous avez gagné le concours de beauté. Recevez 10M.\n");
+            Recevoir(10);
+          }
+          else if(i == 1)
+          {
+            Console.WriteLine("C'est votre anniversaire. Recevez 20M.\n");
+            Recevoir(20);
+          }
+          else if(i == 2)
+          {
+            Console.WriteLine("Vous avez gagné le prix de mot croisé. Recevez 15M.\n");
+            Recevoir(15);
+          }
+          else if(i == 3)
+          {
+            Console.WriteLine("Vous avez perdu votre porte-monnaie qui contenaît 10M.\n");
+            Payer(10);
+            plateau.ParcGrauit += 10;
+          }
+          else if(i == 4)
+          {
+            Console.WriteLine("La banque vous a versé trop d'argent la semaine dernière. Remboursez 25M.\n");
+            Payer(25);
+            plateau.ParcGrauit += 25;
+          }
+          else if(i == 5)
+          {
+            Console.WriteLine("La banque vous verse un dividende de 50M.\n");
+            Recevoir(50);
+          }
         }
-        else if (plateau.State == "Chance")
-        {
-          // simulation de chance
-        }
+        
         
       }
     }

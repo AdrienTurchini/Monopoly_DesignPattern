@@ -39,7 +39,7 @@ namespace Monopoly_DesignPatternA4
       position++;
 
       //caseDepart.Suivante = belleville;
-      Case commu1 = CaseFactory.getCase(position, "autres", "Caise de Communauté");
+      Case commu1 = CaseFactory.getCase(position, "autres", "Caisse de Communauté");
       mesCases.Add(commu1);
       position++;
 
@@ -216,11 +216,13 @@ namespace Monopoly_DesignPatternA4
       }
     }
 
+    Random aleatoire = new Random();
     public void LanceLesDes()
     {
+      
       int de1;
       int de2;
-      Random aleatoire = new Random();
+      
       de1 = aleatoire.Next(1,7);
       de2 = aleatoire.Next(1,7);
       Console.WriteLine("Vous avez fait : " + de1 + " et " + de2);
@@ -229,20 +231,20 @@ namespace Monopoly_DesignPatternA4
       {
         if(joueurActuel.EnPrison == false)
         {
-          Console.WriteLine("Vous avez fait un double ! Vous pouvez relancer les dés à la fin de votre tour.");
+          Console.WriteLine("Vous avez fait un double ! Vous pouvez relancer les dés à la fin de votre tour.\n");
           nombreDeDoubles++;
           rejouer = true;
         }
         else
         {
           joueurActuel.EnPrison = false;
-          Console.WriteLine("Vous êtes libérés de prison. Vous pourrez avancer au prochain tour.");
+          Console.WriteLine("Vous êtes libérés de prison. Vous pourrez avancer au prochain tour.\n");
           rejouer = false;
         }
         
         if(nombreDeDoubles == 3)
         {
-          Console.WriteLine("Trois double d'affilés !! Vous allez en prison sans passer par la case départ");
+          Console.WriteLine("Trois double d'affilés !! Vous allez en prison sans passer par la case départ.\n");
           state = "Triple double";
           rejouer = false;
           Notify();
