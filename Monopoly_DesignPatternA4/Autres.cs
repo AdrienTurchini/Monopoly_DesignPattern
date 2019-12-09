@@ -7,30 +7,33 @@ namespace Monopoly_DesignPatternA4
     #region attributs
     private string nom;
     private string famille;
+    int position;
 
     #endregion
 
     #region constructeur
-    public Autres(string nom)
+    public Autres(int position, string nom)
     {
+      this.position = position;
       this.nom = nom;
       famille = "autres";
     }
     #endregion
 
     #region proprietes
+    public override int getPosition()
+    {
+      return position;
+    }
     public override Joueur getProprietaire()
     {
       return null;
     }
-    public override void setProprietaire(Joueur joueur)
-    {
-      //
-    }
+    public override void setProprietaire(Joueur joueur) { }
     override
     public string getNom()
     {
-      return this.nom;
+      return nom;
     }
     override
     public int getPrix()

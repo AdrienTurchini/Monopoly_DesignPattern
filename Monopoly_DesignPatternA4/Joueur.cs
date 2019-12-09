@@ -3,15 +3,16 @@ using System.Collections.Generic;
 
 namespace Monopoly_DesignPatternA4
 {
-  public class Joueur
+  public class Joueur : IObserver
   {
     #region attributs
     string nom;
     int argent;
-    List<Case> mesCases;
-    int position; // 0 = case départ --> 39 = rue de la Paix
+    List<Case> mesCases = new List<Case>();
+    Case position; // 0 = case départ --> 39 = rue de la Paix
+    int indexPosition;
     bool enPrison;
-    int nombreDoubles;
+    int nombreTourPrison;
     int marron;
     int bleupale;
     int rose;
@@ -22,15 +23,15 @@ namespace Monopoly_DesignPatternA4
     int bleufonce;
     int gare;
     int compagnie;
+    bool elimine;
     #endregion
 
     #region propriétés
     public string Nom { get { return nom; } }
     public int Argent { get { return argent; } set { argent = value; } }
     public List<Case> MesCases { get { return mesCases; } }
-    public int Position { get { return position; } set { position = value; } }
+    public Case Position { get { return position; } set { position = value; } }
     public bool EnPrison { get { return enPrison; } set { enPrison = value; } }
-    public int NombreDoubles { get { return nombreDoubles; } set { nombreDoubles = value; } }
     public int Marron { get { return marron; } }
     public int Bleupale { get { return bleupale; } }
     public int Rose { get { return rose; } }
@@ -41,21 +42,21 @@ namespace Monopoly_DesignPatternA4
     public int Bleufonce { get { return bleufonce; } }
     public int Gare { get { return gare; } }
     public int Compagnie { get { return compagnie; } }
+    public int NombreTourPrison { get { return nombreTourPrison; } }
+    public int IndexPosition { get { return indexPosition; } set { indexPosition = value; } }
+    public bool Elimine { get { return elimine; } set { elimine = value; } }
     #endregion
 
     #region constrcteur
     public Joueur(string nom)
     {
+      elimine = false;
       this.nom = nom;
       argent = 1500;
-      position = 0;
+      indexPosition = 0;
+      position = Plateau.GetPlateau().MesCases[0];
       enPrison = false;
-      nombreDoubles = 0;
-      List<Case> tempCase = new List<Case> { };
-      mesCases = tempCase;
-      Plateau.NouveauJoueur(this);
-
-
+      nombreTourPrison = 0;
     }
     #endregion
 
@@ -64,7 +65,7 @@ namespace Monopoly_DesignPatternA4
 
     public void Payer(int montant)
     {
-      if(argent - montant >= 0)
+      if (argent - montant >= 0)
       {
         argent -= montant;
       }
@@ -73,11 +74,11 @@ namespace Monopoly_DesignPatternA4
         Console.WriteLine("Vous n'avez pas assez d'argent pour payer (" + argent + "M).\nVeuillez enlever des maisons si vous en avez ou hypothequer vos biens si cela est possible.\n Si vous n'avez pas de quoi payer vous avez perdu.");
         bool peutHypothequer = true;
         bool peutVendre = true;
-        while((peutHypothequer == true || peutVendre == true) && (argent - montant < 0))
+        while ((peutHypothequer == true || peutVendre == true) && (argent - montant < 0))
         {
           peutHypothequer = false;
           peutVendre = false;
-          for(int i = 0; i < mesCases.Count; i++)
+          for (int i = 0; i < mesCases.Count; i++)
           {
             if (mesCases[i].getEstHypothequee() == false)
               peutHypothequer = true;
@@ -90,20 +91,17 @@ namespace Monopoly_DesignPatternA4
         if (argent - montant >= 0)
           argent -= montant;
         else
-          Console.WriteLine("Vous êtes éliminés.");
+        {
+          Elimination(position);
+        }
       }
-      
     }
 
-    public void AjouterJoueurPlateau()
-    {
-
-    }
     public void Elimination(Case caseActuelle)
     {
-      if(caseActuelle.getFamille() == "autres" || caseActuelle.getProprietaire() == null)
+      if (caseActuelle.getFamille() == "autres" || caseActuelle.getProprietaire() == null)
       {
-        foreach(Case c in mesCases)
+        foreach (Case c in mesCases)
         {
           c.setEstAchetee(false);
           c.setEstHypothequee(false);
@@ -113,7 +111,7 @@ namespace Monopoly_DesignPatternA4
       }
       else
       {
-        foreach(Case c in mesCases)
+        foreach (Case c in mesCases)
         {
           c.setEstHypothequee(false);
           caseActuelle.getProprietaire().Recevoir(c.getPrix());
@@ -121,7 +119,7 @@ namespace Monopoly_DesignPatternA4
         }
         caseActuelle.getProprietaire().Recevoir(argent);
       }
-      Plateau.JoueurElimine(this);
+      elimine = true;
     }
 
     public void Recevoir(int montant)
@@ -131,7 +129,7 @@ namespace Monopoly_DesignPatternA4
 
     public void Acheter(Case caseActuelle)
     {
-      if (argent - caseActuelle.getPrix() >= 0 && caseActuelle.getPrix() > 0) 
+      if (argent - caseActuelle.getPrix() >= 0 && caseActuelle.getPrix() > 0)
       {
         argent -= caseActuelle.getPrix();
         caseActuelle.setEstAchetee(true);
@@ -161,7 +159,7 @@ namespace Monopoly_DesignPatternA4
       }
       else
         Console.WriteLine("Vous n'avez pas assez d'argent");
-      
+
     }
 
     public void Hypothequer(Case maCase)
@@ -228,8 +226,8 @@ namespace Monopoly_DesignPatternA4
           Console.WriteLine("Vous n'avez pas assez d'argent.");
       }
       else
-        Console.WriteLine("Votre carte est déjà déshypotheuée.");
-      
+        Console.WriteLine("Votre carte est déjà déshypothequée.");
+
     }
 
     public void ConstruireMaisonOuHotel(Case maCase)
@@ -272,7 +270,7 @@ namespace Monopoly_DesignPatternA4
     {
       if (maCase.getNombreDeMaisons() > 0)
       {
-        argent += maCase.getPrixMaison()/2;
+        argent += maCase.getPrixMaison() / 2;
         maCase.setNombreDeMaisons(maCase.getNombreDeMaisons() - 1);
       }
       else
@@ -281,60 +279,72 @@ namespace Monopoly_DesignPatternA4
 
     public void GererProprietes()
     {
-      Console.WriteLine("Voici la liste de vos propriétés : ");
-      int nbDeProprietes = mesCases.Count;
-      int compteur = 1;
-      foreach (Case c in mesCases)
+      if (mesCases.Count > 0)
       {
-        Console.WriteLine(compteur + " : "+ c.getNom() + ", est hypothequée : " + c.getEstHypothequee() + ", Nombre de maisons (5 = hôtel) : " + c.getNombreDeMaisons());
-        compteur++;
-      }
-        
-      Console.Write("Entrez le numéro indiqué dans la la lite de la propriété que vous souhaitez gérer : ");
-      string verifEntry = " ";
-      int numero = 0;
-      bool isNumber = false;
-      while(!isNumber)
-      {
-        verifEntry = Console.ReadLine();
-        isNumber = int.TryParse(verifEntry, out numero);
-        if (isNumber == false)
-          Console.WriteLine("Veuillez entrer un numéro :");
-        else if(numero < 1 || numero > nbDeProprietes)
+        Console.WriteLine("Voici la liste de vos propriétés : ");
+        int nbDeProprietes = mesCases.Count;
+        int compteur = 1;
+        foreach (Case c in mesCases)
         {
-          Console.WriteLine("Veuillez entrer le numéro indiqué au début de la ligne de chaque propriété : ");
-          isNumber = false;
+          Console.Write(compteur + " : " + c.getNom() + ", est hypothequée : " + c.getEstHypothequee());
+          if(c.getFamille() == "marron" || c.getFamille() == "bleupale" || c.getFamille() == "rose" || c.getFamille() == "orange" || c.getFamille() == "rouge" || c.getFamille() == "jaune" || c.getFamille() == "vert" || c.getFamille() == "bleufonce")
+          {
+            Console.Write(", Nombre de maisons (5 = hôtel) : " + c.getNombreDeMaisons());
+          }
+          Console.WriteLine();
+          compteur++;
         }
-      }
 
-      Console.WriteLine("Vous avez " + argent + "M");
-      Console.Write("\nTapez 1 pour Construire des maisons, 2 pour Vendre des maisons, 3 pour hypothequer, 4 pour déshypothequer, 5 pour quitter : ");
-      Console.WriteLine();
-      string choice = "";
-      choice = Console.ReadLine();
-      while (choice != "1" && choice != "2" && choice != "3" && choice != "4" && choice != "5")
-      {
-        Console.Write("Tapez 1 pour Construire des maisons, 2 pour Vendre des maisons, 3 pour hypothequer, 4 pour déshypothequer, 5 pour quitter : ");
-        choice = Console.ReadLine();
+        Console.Write("Entrez le numéro indiqué dans la la lite de la propriété que vous souhaitez gérer : ");
+        string verifEntry = " ";
+        int numero = 0;
+        bool isNumber = false;
+        while (!isNumber)
+        {
+          verifEntry = Console.ReadLine();
+          isNumber = int.TryParse(verifEntry, out numero);
+          if (isNumber == false)
+            Console.WriteLine("Veuillez entrer un numéro :");
+          else if (numero < 1 || numero > nbDeProprietes)
+          {
+            Console.WriteLine("Veuillez entrer le numéro indiqué au début de la ligne de chaque propriété : ");
+            isNumber = false;
+          }
+        }
+
+        Console.WriteLine("Vous avez " + argent + "M");
+        Console.Write("\nTapez 1 pour Construire des maisons, 2 pour Vendre des maisons, 3 pour hypothequer, 4 pour déshypothequer, 5 pour quitter : ");
         Console.WriteLine();
+        string choice = "";
+        choice = Console.ReadLine();
+        while (choice != "1" && choice != "2" && choice != "3" && choice != "4" && choice != "5")
+        {
+          Console.Write("Tapez 1 pour Construire des maisons, 2 pour Vendre des maisons, 3 pour hypothequer, 4 pour déshypothequer, 5 pour quitter : ");
+          choice = Console.ReadLine();
+          Console.WriteLine();
+        }
+        switch (choice)
+        {
+          case "1":
+            ConstruireMaisonOuHotel(mesCases[numero - 1]);
+            break;
+          case "2":
+            VendreMaisonOuHotel(mesCases[numero - 1]);
+            break;
+          case "3":
+            Hypothequer(mesCases[numero - 1]);
+            break;
+          case "4":
+            DesHypothequer(mesCases[numero - 1]);
+            break;
+          case "5":
+            break;
+        }
+
       }
-      switch (choice)
-      {
-        case "1":
-          ConstruireMaisonOuHotel(mesCases[numero - 1]);
-          break;
-        case "2":
-          VendreMaisonOuHotel(mesCases[numero - 1]);
-          break;
-        case "3":
-          Hypothequer(mesCases[numero - 1]);
-          break;
-        case "4":
-          DesHypothequer(mesCases[numero - 1]);
-          break;
-        case "5":
-          break;
-      }
+      else
+        Console.WriteLine("Vous n'avez pas encore de propriétés\n");
+
     }
 
     public override string ToString()
@@ -346,6 +356,192 @@ namespace Monopoly_DesignPatternA4
       return myString;
     }
 
+    // comme dans notre cas le plateau est l'unique subject pouvant activer la fonction update, pour une question de lisibilité et simplicité nous avons directement prit le plateau comme argument et non ISubject subject
+    public void Update(Plateau plateau)
+    {
+      if (plateau.JoueurActuel == this)
+      {
+        if ((position.getPosition() - plateau.LancerDeDe < 0) && enPrison == false && plateau.State != "Triple Double")
+        {
+          Recevoir(200);
+        }
+        if (plateau.State == "Aller en prison" || plateau.State == "Triple double")
+        {
+          position = plateau.MesCases[10];
+          indexPosition = 10; 
+          enPrison = true;
+          nombreTourPrison = 0;
+        }
+        else if (plateau.State == "proprietes")
+        {
+
+          if (position.getEstAchetee() == false)
+          {
+            Console.WriteLine("Cette carte est libre. Voici ses caractéristiques :");
+            Console.WriteLine(position);
+            Console.WriteLine("Voulez-vous acheter cette carte ? Entrez Oui ou Non : ");
+            string ouiOuNon = "";
+            ouiOuNon = Console.ReadLine();
+            while (ouiOuNon.ToLower() != "oui" && ouiOuNon.ToLower() != "non")
+            {
+              Console.WriteLine("Entrez Oui ou Non : ");
+              ouiOuNon = Console.ReadLine();
+            }
+            if (ouiOuNon.ToLower() == "oui")
+              Acheter(position);
+          }
+          else if (position.getEstHypothequee() == false && position.getProprietaire() != this)
+          {
+            Console.WriteLine("La carte est au joueur " + position.getProprietaire().Nom);
+            if (position.getFamille() == "marron" || position.getFamille() == "bleupale" || position.getFamille() == "rose" || position.getFamille() == "orange" || position.getFamille() == "rouge" || position.getFamille() == "jaune" || position.getFamille() == "vert" || position.getFamille() == "bleufonce")
+            {
+              if (position.getNombreDeMaisons() == 0)
+              {
+                Console.WriteLine("Vous payer un loyer simple de " + position.getLoyer());
+                Payer(position.getLoyer());
+                position.getProprietaire().Recevoir(position.getLoyer());
+              }
+              else if (position.getNombreDeMaisons() == 1)
+              {
+                Console.WriteLine("Vous payer un loyer 1 maison de " + position.getLoyer1Maison());
+                Payer(position.getLoyer1Maison());
+                position.getProprietaire().Recevoir(position.getLoyer1Maison());
+              }
+
+              else if (position.getNombreDeMaisons() == 2)
+              {
+                Console.WriteLine("Vous payer un loyer 2 maisons de " + position.getLoyer2Maison());
+                Payer(position.getLoyer2Maison());
+                position.getProprietaire().Recevoir(position.getLoyer2Maison());
+              }
+
+              else if (position.getNombreDeMaisons() == 3)
+              {
+                Console.WriteLine("Vous payer un loyer 3 maisons de " + position.getLoyer3Maison());
+                Payer(position.getLoyer3Maison());
+                position.getProprietaire().Recevoir(position.getLoyer3Maison());
+              }
+
+              else if (position.getNombreDeMaisons() == 4)
+              {
+                Console.WriteLine("Vous payer un loyer 4 maisons de " + position.getLoyer4Maison());
+                Payer(position.getLoyer4Maison());
+                position.getProprietaire().Recevoir(position.getLoyer4Maison());
+
+              }
+              else
+              {
+                Console.WriteLine("Vous payer un loyer hôtel " + position.getHotel());
+                Payer(position.getHotel());
+                position.getProprietaire().Recevoir(position.getHotel());
+              }
+            }
+            else if (position.getFamille() == "gare")
+            {
+              Console.Write("Vous payez le loyer pour " + position.getProprietaire().gare + " gares soit ");
+              if (position.getProprietaire().gare == 1)
+              {
+                Console.WriteLine("25M.");
+                Payer(25);
+                position.getProprietaire().Recevoir(25);
+
+              }
+              if (position.getProprietaire().gare == 2)
+              {
+                Console.WriteLine("50M.");
+                Payer(50);
+                position.getProprietaire().Recevoir(50);
+              }
+              if (position.getProprietaire().gare == 3)
+              {
+                Console.WriteLine("100M.");
+                Payer(100);
+                position.getProprietaire().Recevoir(100);
+              }
+              if (position.getProprietaire().gare == 4)
+              {
+                Console.WriteLine("200M.");
+                Payer(200);
+                position.getProprietaire().Recevoir(200);
+              }
+            }
+            else
+            {
+              Console.Write("Vous payez le loyer de " + position.getProprietaire().compagnie + " compagnie donc ");
+              if (position.getProprietaire().compagnie == 1)
+              {
+                Console.WriteLine("4 fois le montant de vos dés (" + plateau.LancerDeDe + ") soit " + plateau.LancerDeDe * 4);
+                Payer(plateau.LancerDeDe * 4);
+                position.getProprietaire().Recevoir(plateau.LancerDeDe * 4);
+              }
+              if (position.getProprietaire().compagnie == 2)
+              {
+                Console.WriteLine("10 fois le montant de vos dés (" + plateau.LancerDeDe + ") soit " + plateau.LancerDeDe * 10);
+                Payer(plateau.LancerDeDe * 10);
+                position.getProprietaire().Recevoir(plateau.LancerDeDe * 10);
+              }
+            }
+          }
+          else
+          {
+            if(position.getProprietaire() == this)
+            {
+              Console.WriteLine("Vous êtes chez vous.");
+            }
+            else
+            {
+              Console.WriteLine("La carte est hypothequée vous n'avez rien a payer.");
+            }
+            
+          }
+            
+        }
+        else if (plateau.State == "Case Départ")
+        {
+          Console.WriteLine("Vous recevez 400M.");
+          Recevoir(400);
+          Payer(200); // car le joueur reçoit également 200 comme il a finit le tour et passe par la case départ
+        }
+        else if (plateau.State == "Parc Gratuit")
+        {
+          Console.WriteLine("Vous recevez " + plateau.ParcGrauit + "M.");
+          Recevoir(plateau.ParcGrauit);
+          plateau.ParcGrauit = 0;
+        }
+        else if (plateau.State == "Prison" && enPrison == true)
+        {
+          nombreTourPrison++;
+          Console.WriteLine("Ceci est votre " + nombreTourPrison + " tour de prison.");
+          if (nombreTourPrison == 3)
+          {
+            Console.WriteLine("Vous êtes libérés de prison car vous y avez passé 3 tours. Vous pourrez avancer au prochain tour.");
+            enPrison = false;
+          }
+          
+        }
+        else if (plateau.State == "Impôts")
+        {
+          Console.WriteLine("Vous payer les impôts 200M.");
+          Payer(200);
+          plateau.ParcGrauit += 200;
+        }
+        else if (plateau.State == "Taxe de luxe")
+        {
+          Console.WriteLine("Vous payer la Taxe de Luxe 200M.");
+          Payer(150);
+          plateau.ParcGrauit += 150;
+        }
+        else if (plateau.State == "Caisse de Communauté")
+        {
+          // simulation de caisse de communauté
+        }
+        else if (plateau.State == "Chance")
+        {
+          // simulation de chance
+        }
+        
+      }
+    }
     #endregion
 
 

@@ -3,14 +3,20 @@ using System.Collections.Generic;
 
 namespace Monopoly_DesignPatternA4
 {
-  public class Plateau
+  public class Plateau : ISubject
   {
     #region attributs
     // variable locale static qui permet de referencer l'instance de ma classe soit le plateau
     private static Plateau monPlateau = null;
     private static readonly object myLock = new object();
-    private List<Case> mesCases;
-    private List<Joueur> lesJoueurs;
+    private List<Case> mesCases = new List<Case>();
+    private List<Joueur> lesJoueurs = new List<Joueur>(); // list of subscribers (observers of the subject)
+    private string state; // subject state
+    private Joueur joueurActuel;
+    int nombreDeDoubles;
+    bool rejouer;
+    int lancerDeDe;
+    int parcgratuit;
     #endregion
 
     #region constructeur
@@ -18,140 +24,183 @@ namespace Monopoly_DesignPatternA4
     //qui verifie qu'il n'y a qu'une seule instance (singleton)
     private Plateau()
     {
-      List<Joueur> temp = new List<Joueur>();
-      lesJoueurs = temp;
-      List<Case> mesCasesTemp = new List<Case>();
+      rejouer = false;
+      nombreDeDoubles = 0;
+      int position = 0;
+      state = "";
       // Construction des cartes du plateau de jeu
-      Case caseDepart = CaseFactory.getCase("Autres", "Case depart");
+      Case caseDepart = CaseFactory.getCase(position, "autres", "Case Départ"); ;
       //Autres caseDepart = new Autres("Case départ");
-      mesCasesTemp.Add(caseDepart);
-      Case belleville = CaseFactory.getCase("propriete", "marron", "Boulevard De Belleville", 60, 30, 50, 2, 10, 30, 90, 160, 250);
+      mesCases.Add(caseDepart);
+      position++;
+      Case belleville = CaseFactory.getCase(position, "propriete", "marron", "Boulevard De Belleville", 60, 30, 50, 2, 10, 30, 90, 160, 250);
       //Proporiete belleville = new Proporiete("Boulevard De Belleville", 60, 30, 50, 2, 10, 30, 90, 160, 250);
-      mesCasesTemp.Add(belleville);
+      mesCases.Add(belleville);
+      position++;
 
-            //caseDepart.Suivante = belleville;
-            Case commu1 = CaseFactory.getCase("autres", "Caise de Communauté");
-            mesCasesTemp.Add(commu1);
+      //caseDepart.Suivante = belleville;
+      Case commu1 = CaseFactory.getCase(position, "autres", "Caise de Communauté");
+      mesCases.Add(commu1);
+      position++;
 
-            Case lecourbe = CaseFactory.getCase("propriete", "marron", "Rue Lecourbe", 60, 30, 50, 4, 20, 60, 180, 320, 450);
-            mesCasesTemp.Add(lecourbe);
+      Case lecourbe = CaseFactory.getCase(position, "propriete", "marron", "Rue Lecourbe", 60, 30, 50, 4, 20, 60, 180, 320, 450);
+      mesCases.Add(lecourbe);
+      position++;
 
-            Case impot = CaseFactory.getCase("autres", "impot");
-            mesCasesTemp.Add(impot);
+      Case impot = CaseFactory.getCase(position, "autres", "Impôts");
+      mesCases.Add(impot);
+      position++;
 
-            Case gareMontparnasse = CaseFactory.getCase("gare", "Gare Montparnasse");
-            mesCasesTemp.Add(gareMontparnasse);
+      Case gareMontparnasse = CaseFactory.getCase(position, "gare", "Gare Montparnasse");
+      mesCases.Add(gareMontparnasse);
+      position++;
 
-            Case vaugirard = CaseFactory.getCase("propriete", "bleupale", "Rue de Vaugirard", 100, 50, 50, 6, 30, 90, 270, 400, 550);
-            mesCasesTemp.Add(vaugirard);
+      Case vaugirard = CaseFactory.getCase(position, "propriete", "bleupale", "Rue de Vaugirard", 100, 50, 50, 6, 30, 90, 270, 400, 550);
+      mesCases.Add(vaugirard);
+      position++;
 
-            Case chance1 = CaseFactory.getCase("autres", "Chance");
-            mesCasesTemp.Add(chance1);
+      Case chance1 = CaseFactory.getCase(position, "autres", "Chance");
+      mesCases.Add(chance1);
+      position++;
 
-            Case courcelle = CaseFactory.getCase("propriete", "bleupale", "Rue de Courcelle", 100, 50, 50, 6, 30, 90, 270, 400, 550);
-            mesCasesTemp.Add(courcelle);
+      Case courcelle = CaseFactory.getCase(position, "propriete", "bleupale", "Rue de Courcelle", 100, 50, 50, 6, 30, 90, 270, 400, 550);
+      mesCases.Add(courcelle);
+      position++;
 
-            Case republique = CaseFactory.getCase("propriete", "bleupale", "Avenue de la République", 120, 60, 50, 8, 40, 100, 350, 400, 600);
-            mesCasesTemp.Add(republique);
+      Case republique = CaseFactory.getCase(position, "propriete", "bleupale", "Avenue de la République", 120, 60, 50, 8, 40, 100, 350, 400, 600);
+      mesCases.Add(republique);
+      position++;
 
-            Case prison = CaseFactory.getCase("autres", "prison");
-            mesCasesTemp.Add(prison);
+      Case prison = CaseFactory.getCase(position, "autres", "prison");
+      mesCases.Add(prison);
+      position++;
 
-            Case villette = CaseFactory.getCase("autres", "rose", "Boulevard de la Villette", 140, 70, 100, 10, 50, 150, 425, 625, 750);
-            mesCasesTemp.Add(villette);
+      Case villette = CaseFactory.getCase(position, "autres", "rose", "Boulevard de la Villette", 140, 70, 100, 10, 50, 150, 425, 625, 750);
+      mesCases.Add(villette);
+      position++;
 
-            Case compagnieElectricite = CaseFactory.getCase("compagnie", "Compagnie de Distribution d'electricite");
-            mesCasesTemp.Add(compagnieElectricite);
+      Case compagnieElectricite = CaseFactory.getCase(position, "compagnie", "Compagnie de Distribution d'electricite");
+      mesCases.Add(compagnieElectricite);
+      position++;
 
-            Case neuilly = CaseFactory.getCase("propriete", "rose", "Avenue de Neuilly", 140, 70, 100, 10, 50, 150, 425, 625, 750);
-            mesCasesTemp.Add(neuilly);
+      Case neuilly = CaseFactory.getCase(position, "propriete", "rose", "Avenue de Neuilly", 140, 70, 100, 10, 50, 150, 425, 625, 750);
+      mesCases.Add(neuilly);
+      position++;
 
-            Case paradis = CaseFactory.getCase("propriete", "rose", "Rue du Paradis", 160, 80, 100, 12, 60, 180, 500, 700, 900);
-            mesCasesTemp.Add(paradis);
+      Case paradis = CaseFactory.getCase(position, "propriete", "rose", "Rue du Paradis", 160, 80, 100, 12, 60, 180, 500, 700, 900);
+      mesCases.Add(paradis);
+      position++;
 
-            Case gareLyon = CaseFactory.getCase("gare", "Gare de Lyon");
-            mesCasesTemp.Add(gareLyon);
+      Case gareLyon = CaseFactory.getCase(position, "gare", "Gare de Lyon");
+      mesCases.Add(gareLyon);
+      position++;
 
-            Case mozart = CaseFactory.getCase("propriete", "orange", "Avenue Mozart", 180, 90, 100, 14, 70, 200, 550, 750, 950);
-            mesCasesTemp.Add(mozart);
+      Case mozart = CaseFactory.getCase(position, "propriete", "orange", "Avenue Mozart", 180, 90, 100, 14, 70, 200, 550, 750, 950);
+      mesCases.Add(mozart);
+      position++;
 
-            Case commu2 = CaseFactory.getCase("autres", "Caisse de Communauté");
-            mesCasesTemp.Add(commu2);
+      Case commu2 = CaseFactory.getCase(position, "autres", "Caisse de Communauté");
+      mesCases.Add(commu2);
+      position++;
 
-            Case saintMichel = CaseFactory.getCase("propriete", "orange", "Boulevard Saint-Michel", 180, 90, 100, 14, 70, 200, 550, 750, 950);
-            mesCasesTemp.Add(saintMichel);
+      Case saintMichel = CaseFactory.getCase(position, "propriete", "orange", "Boulevard Saint-Michel", 180, 90, 100, 14, 70, 200, 550, 750, 950);
+      mesCases.Add(saintMichel);
+      position++;
 
-            Case pigalle = CaseFactory.getCase("propriete", "orange", "Place Pigalle", 200, 100, 100, 16, 80, 220, 600, 800, 1000);
-            mesCasesTemp.Add(pigalle);
+      Case pigalle = CaseFactory.getCase(position, "propriete", "orange", "Place Pigalle", 200, 100, 100, 16, 80, 220, 600, 800, 1000);
+      mesCases.Add(pigalle);
+      position++;
 
-            Case parcGratuit = CaseFactory.getCase("autres", "Parc Gratuit");
-            mesCasesTemp.Add(parcGratuit);
+      Case parcGratuit = CaseFactory.getCase(position, "autres", "Parc Gratuit");
+      mesCases.Add(parcGratuit);
+      position++;
 
-            Case matignon = CaseFactory.getCase("Propriete", "rouge", "Avenue Matignon", 220, 110, 150, 18, 90, 250, 700, 875, 1050);
-            mesCasesTemp.Add(matignon);
+      Case matignon = CaseFactory.getCase(position, "propriete", "rouge", "Avenue Matignon", 220, 110, 150, 18, 90, 250, 700, 875, 1050);
+      mesCases.Add(matignon);
+      position++;
 
-            Case chance2 = CaseFactory.getCase("autres", "Chance");
-            mesCasesTemp.Add(chance2);
+      Case chance2 = CaseFactory.getCase(position, "autres", "Chance");
+      mesCases.Add(chance2);
+      position++;
 
-            Case malesherbes = CaseFactory.getCase("propriete", "rouge", "Boulevard Malesherbes", 220, 110, 150, 18, 90, 250, 700, 875, 1050);
-            mesCasesTemp.Add(malesherbes);
+      Case malesherbes = CaseFactory.getCase(position, "propriete", "rouge", "Boulevard Malesherbes", 220, 110, 150, 18, 90, 250, 700, 875, 1050);
+      mesCases.Add(malesherbes);
+      position++;
 
-            Case henriMartin = CaseFactory.getCase("propriete", "rouge", "Avenue Henri-Martin", 240, 120, 150, 20, 100, 300, 750, 925, 1100);
-            mesCasesTemp.Add(henriMartin);
+      Case henriMartin = CaseFactory.getCase(position, "propriete", "rouge", "Avenue Henri-Martin", 240, 120, 150, 20, 100, 300, 750, 925, 1100);
+      mesCases.Add(henriMartin);
+      position++;
 
-            Case gareDuNord = CaseFactory.getCase("gare", "Gare du Nord");
-            mesCasesTemp.Add(gareDuNord);
+      Case gareDuNord = CaseFactory.getCase(position, "gare", "Gare du Nord");
+      mesCases.Add(gareDuNord);
+      position++;
 
-            Case saintHonore = CaseFactory.getCase("propriete", "jaune", "Faubourg Saint-Honoré", 260, 130, 150, 22, 110, 330, 800, 975, 1150);
-            mesCasesTemp.Add(saintHonore);
+      Case saintHonore = CaseFactory.getCase(position, "propriete", "jaune", "Faubourg Saint-Honoré", 260, 130, 150, 22, 110, 330, 800, 975, 1150);
+      mesCases.Add(saintHonore);
+      position++;
 
-            Case bourse = CaseFactory.getCase("propriete", "jaune", "Place de la Bourse", 260, 130, 150, 22, 110, 330, 800, 975, 1150);
-            mesCasesTemp.Add(bourse);
+      Case bourse = CaseFactory.getCase(position, "propriete", "jaune", "Place de la Bourse", 260, 130, 150, 22, 110, 330, 800, 975, 1150);
+      mesCases.Add(bourse);
+      position++;
 
-            Case compagnieEau = CaseFactory.getCase("compagnie", "Compagnie de Distribution des Eaux");
-            mesCasesTemp.Add(compagnieEau);
+      Case compagnieEau = CaseFactory.getCase(position, "compagnie", "Compagnie de Distribution des Eaux");
+      mesCases.Add(compagnieEau);
+      position++;
 
-            Case fayette = CaseFactory.getCase("propriete", "jaune", "Rue la Fayette", 280, 140, 150, 24, 120, 360, 850, 1025, 1200);
-            mesCasesTemp.Add(fayette);
+      Case fayette = CaseFactory.getCase(position, "propriete", "jaune", "Rue la Fayette", 280, 140, 150, 24, 120, 360, 850, 1025, 1200);
+      mesCases.Add(fayette);
+      position++;
 
-            Case allerPrison = CaseFactory.getCase("autres", "Aller en prison");
-            mesCasesTemp.Add(allerPrison);
+      Case allerPrison = CaseFactory.getCase(position, "autres", "Aller en prison");
+      mesCases.Add(allerPrison);
+      position++;
 
-            Case breteuil = CaseFactory.getCase("propriete", "vert", "Avenue de Breteuil", 300, 150, 200, 26, 130, 390, 900, 1100, 1275);
-            mesCasesTemp.Add(breteuil);
+      Case breteuil = CaseFactory.getCase(position, "propriete", "vert", "Avenue de Breteuil", 300, 150, 200, 26, 130, 390, 900, 1100, 1275);
+      mesCases.Add(breteuil);
+      position++;
 
-            Case foch = CaseFactory.getCase("propriete", "vert", "Avenue Foch", 300, 150, 200, 26, 130, 390, 900, 1100, 1275);
-            mesCasesTemp.Add(foch);
+      Case foch = CaseFactory.getCase(position, "propriete", "vert", "Avenue Foch", 300, 150, 200, 26, 130, 390, 900, 1100, 1275);
+      mesCases.Add(foch);
+      position++;
 
-            Case commu3 = CaseFactory.getCase("autres", "Caisse de Communauté");
-            mesCasesTemp.Add(commu3);
+      Case commu3 = CaseFactory.getCase(position, "autres", "Caisse de Communauté");
+      mesCases.Add(commu3);
+      position++;
 
-            Case capucines = CaseFactory.getCase("propriete", "vert", "Boulevard des Capucines", 320, 160, 200, 28, 150, 450, 1000, 1200, 1400);
-            mesCasesTemp.Add(capucines);
+      Case capucines = CaseFactory.getCase(position, "propriete", "vert", "Boulevard des Capucines", 320, 160, 200, 28, 150, 450, 1000, 1200, 1400);
+      mesCases.Add(capucines);
+      position++;
 
-            Case gareSaintLazare = CaseFactory.getCase("gare", "Gare Saint-Lazare");
-            mesCasesTemp.Add(gareSaintLazare);
+      Case gareSaintLazare = CaseFactory.getCase(position, "gare", "Gare Saint-Lazare");
+      mesCases.Add(gareSaintLazare);
+      position++;
 
-            Case chance3 = CaseFactory.getCase("autres", "Chance");
-            mesCasesTemp.Add(chance3);
+      Case chance3 = CaseFactory.getCase(position, "autres", "Chance");
+      mesCases.Add(chance3);
+      position++;
 
-            Case champElysee = CaseFactory.getCase("propriete", "bleufonce", "Avenue des Champs-Elysées", 350, 175, 200, 35, 175, 500, 1100, 1300, 1500);
-            mesCasesTemp.Add(champElysee);
+      Case champElysee = CaseFactory.getCase(position, "propriete", "bleufonce", "Avenue des Champs-Elysées", 350, 175, 200, 35, 175, 500, 1100, 1300, 1500);
+      mesCases.Add(champElysee);
+      position++;
 
-            Case taxe = CaseFactory.getCase("autres", "Taxe de luxe");
-            mesCasesTemp.Add(taxe);
+      Case taxe = CaseFactory.getCase(position, "autres", "Taxe de luxe");
+      mesCases.Add(taxe);
+      position++;
 
-            Case paix = CaseFactory.getCase("propriete", "bleufonce", "Rue de la Paix", 400, 200, 200, 50, 200, 600, 1400, 1700, 2000);
-            mesCasesTemp.Add(paix);
-
-            mesCases = mesCasesTemp;
-      
+      Case paix = CaseFactory.getCase(position, "propriete", "bleufonce", "Rue de la Paix", 400, 200, 200, 50, 200, 600, 1400, 1700, 2000);
+      mesCases.Add(paix);
     }
     #endregion
 
     #region proprietes
     public List<Case> MesCases { get { return mesCases; } }
     public List<Joueur> LesJoueurs { get { return lesJoueurs; } set { lesJoueurs = value; } }
+    public string State { get { return state; } set { state = value; } }
+    public Joueur JoueurActuel { get { return joueurActuel; } set { joueurActuel = value; } }
+    public int NombreDeDoubles { get { return nombreDeDoubles; } set { nombreDeDoubles = value; } }
+    public int ParcGrauit { get { return parcgratuit; } set { parcgratuit = value; } }
+    public int LancerDeDe { get { return lancerDeDe; } set { lancerDeDe = value; } }
+    public bool Rejouer { get { return rejouer; } set { rejouer = value; } }
     #endregion
 
     #region methodes
@@ -167,14 +216,68 @@ namespace Monopoly_DesignPatternA4
       }
     }
 
-    public static void JoueurElimine(Joueur joueur)
+    public void LanceLesDes()
     {
-      Plateau.GetPlateau().lesJoueurs.Remove(joueur);
+      int de1;
+      int de2;
+      Random aleatoire = new Random();
+      de1 = aleatoire.Next(1,7);
+      de2 = aleatoire.Next(1,7);
+      Console.WriteLine("Vous avez fait : " + de1 + " et " + de2);
+      lancerDeDe = de1 + de2;
+      if (de1 == de2)
+      {
+        if(joueurActuel.EnPrison == false)
+        {
+          Console.WriteLine("Vous avez fait un double ! Vous pouvez relancer les dés à la fin de votre tour.");
+          nombreDeDoubles++;
+          rejouer = true;
+        }
+        else
+        {
+          joueurActuel.EnPrison = false;
+          Console.WriteLine("Vous êtes libérés de prison. Vous pourrez avancer au prochain tour.");
+          rejouer = false;
+        }
+        
+        if(nombreDeDoubles == 3)
+        {
+          Console.WriteLine("Trois double d'affilés !! Vous allez en prison sans passer par la case départ");
+          state = "Triple double";
+          rejouer = false;
+          Notify();
+        }
+      }
+      else
+      {
+        nombreDeDoubles = 0;
+        rejouer = false;
+      }
     }
 
-    public static void NouveauJoueur(Joueur joueur)
+    
+
+
+    // Fonction Detach du subject dans le pattern observer, nous avons remplacé l'argument IObserver joueur par Joueur joueur car seule la classe Joueur implémente l'interface 
+    public void JoueurElimine(Joueur joueur)
     {
-      Plateau.GetPlateau().lesJoueurs.Add(joueur);
+      Console.WriteLine(joueur.Nom + " est éliminé du jeu");
+      lesJoueurs.Remove(joueur);
+    }
+
+    // Fonction Attach du subject dans le pattern observer, nous avons remplacé l'argument IObserver joueur par Joueur joueur car seule la classe Joueur implémente l'interface 
+    public void NouveauJoueur(Joueur joueur)
+    {
+      Console.WriteLine("Bienvenue à " + joueur.Nom);
+      lesJoueurs.Add(joueur);
+    }
+
+    public void Notify()
+    {
+      foreach (Joueur j in lesJoueurs)
+      {
+        j.Update(this);
+      }
     }
     #endregion
   }

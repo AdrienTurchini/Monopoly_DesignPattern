@@ -20,6 +20,7 @@ namespace Monopoly_DesignPatternA4
     private int nombreDeMaisons; // 5 = hotel
     private string famille;
     private Joueur proprietaire;
+    int position;
 
 
     #endregion
@@ -27,8 +28,9 @@ namespace Monopoly_DesignPatternA4
     #region Constructeurs
 
     // Constructeur rue
-    public Proporiete(string famille, string nom, int prix, int valeurHypotheque, int prixMaison, int loyerSimple, int loyer1Maison, int loyer2Maisons, int loyer3Maisons, int loyer4Maisons, int loyerHotel)
+    public Proporiete(int position, string famille, string nom, int prix, int valeurHypotheque, int prixMaison, int loyerSimple, int loyer1Maison, int loyer2Maisons, int loyer3Maisons, int loyer4Maisons, int loyerHotel)
     {
+      this.position = position;
       this.nom = nom;
       this.prix = prix;
       this.valeurHypotheque = valeurHypotheque;
@@ -47,6 +49,10 @@ namespace Monopoly_DesignPatternA4
     #endregion
 
     #region propriétés
+    public override int getPosition()
+    {
+      return position;
+    }
     override
     public string getNom()
     {

@@ -11,11 +11,14 @@ namespace Monopoly_DesignPatternA4
     private bool estHypothequee;
     private string famille;
     private Joueur proprietaire;
+    int position;
     #endregion
 
     #region conctructeur
-    public Gare(string nom)
+    public Gare(int position, string nom)
     {
+      estAchetee = false;
+      this.position = position;
       this.nom = nom;
       prix = 200;
       valeurHypotheque = 100;
@@ -25,6 +28,10 @@ namespace Monopoly_DesignPatternA4
     #endregion
 
     #region proprietes
+    public override int getPosition()
+    {
+      return position;
+    }
     public override Joueur getProprietaire()
     {
       return proprietaire;
@@ -120,7 +127,7 @@ namespace Monopoly_DesignPatternA4
     #region methodes
     public override string ToString()
     {
-      return "Nom : " + nom + " Prix : " + prix + " Valeur hypothèque : " + valeurHypotheque;
+      return "Nom : " + nom + " Prix : " + prix + ", Valeur hypothèque : " + valeurHypotheque + " / Loyer 1 gare = 25, Loyer 2 gares = 50, Loyer 3 gares = 100, Loyer 4 gares = 200.";
     }
     #endregion
   }
