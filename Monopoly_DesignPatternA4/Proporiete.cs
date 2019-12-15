@@ -4,7 +4,6 @@ namespace Monopoly_DesignPatternA4
   public class Proporiete : Case
   {
     #region Attributs
-
     private string nom;
     private int prix;
     private int valeurHypotheque;
@@ -26,8 +25,6 @@ namespace Monopoly_DesignPatternA4
     #endregion
 
     #region Constructeurs
-
-    // Constructeur rue
     public Proporiete(int position, string famille, string nom, int prix, int valeurHypotheque, int prixMaison, int loyerSimple, int loyer1Maison, int loyer2Maisons, int loyer3Maisons, int loyer4Maisons, int loyerHotel)
     {
       this.position = position;

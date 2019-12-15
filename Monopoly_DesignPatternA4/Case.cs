@@ -3,6 +3,11 @@ namespace Monopoly_DesignPatternA4
 {
   public abstract class Case
   {
+    // Toutes les cartes, propriétés, chances, case départ etc. sont des cases.
+    // La classe abstraite case possède toutes les fonctions nécéssaire au fonctionnement du jeux comme obtenir le nombre de maisons
+    // cela signifie que une gare par exemple aura également ces fonctions qui ne lui sont pas utiles et qui renvoient une valeur défaut.
+    // cela permet d'utiliser ces méthodes directement sur une liste de case sans devoir caster la case en question selon ce que c'est et rend le programme plus facile même si c'est moins "beau"
+
     public abstract int getPosition();
     public abstract string getNom();
     public abstract int getPrix();
@@ -15,7 +20,6 @@ namespace Monopoly_DesignPatternA4
     public abstract int getLoyer4Maison();
     public abstract int getHotel();
     public abstract int getNombreDeMaisons();
-
     public abstract bool getEstAchetee();
     public abstract void setEstAchetee(bool value);
     public abstract bool getEstHypothequee();

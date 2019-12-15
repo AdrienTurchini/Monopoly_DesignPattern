@@ -27,6 +27,7 @@ namespace Monopoly_DesignPatternA4
     }
     #endregion
 
+    // la classe possède des méthodes qui lui sont inutiles mais qui permettent d'utiliser ces fonctions sur les classes pour lesquelles elles sont utiles directement dans une liste de Case sans caster la case en question en propriété par exemple. 
     #region proprietes
     public override int getPosition()
     {

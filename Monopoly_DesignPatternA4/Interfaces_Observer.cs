@@ -6,6 +6,7 @@ namespace Monopoly_DesignPatternA4
 {
   public interface IObserver
   {
+
     void Update(Plateau plateau);
   }
 

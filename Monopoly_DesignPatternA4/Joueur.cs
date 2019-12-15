@@ -9,21 +9,21 @@ namespace Monopoly_DesignPatternA4
     string nom;
     int argent;
     List<Case> mesCases = new List<Case>();
-    Case position; // 0 = case départ --> 39 = rue de la Paix
-    int indexPosition;
-    bool enPrison;
-    int nombreTourPrison;
-    int marron;
-    int bleupale;
-    int rose;
-    int orange;
-    int rouge;
-    int jaune;
-    int vert;
-    int bleufonce;
-    int gare;
-    int compagnie;
-    bool elimine;
+    Case position; 
+    int indexPosition; // 0 = case départ --> 39 = rue de la Paix, pas indispensable mais facilite le projet 
+    bool enPrison; // si le joueur est en prison ou non
+    int nombreTourPrison; // depuis combien de tour il est en prison --> 3 il sort
+    int marron; // permet de savoir si le joueur à les 2 cartes marrons pour construire des maisons
+    int bleupale; // idem
+    int rose; // idem
+    int orange; // idem
+    int rouge; // idem
+    int jaune; // idem
+    int vert; // idem
+    int bleufonce; // idem
+    int gare; // permet de savoir combien de gares à le joueur sans parcourir toutes ses propriétés
+    int compagnie; // permet de savoir combien de comagnies à le joueur sans parcourir toutes ses propriétés
+    bool elimine; // lorsque le joueur est elimine devient true et permet de le supprimer de la liste des joueurs par la suite  
     #endregion
 
     #region propriétés
@@ -60,9 +60,11 @@ namespace Monopoly_DesignPatternA4
     }
     #endregion
 
-
     #region methodes
 
+    // enleve de l'argent au joueur.
+    // Si il ne peut pas payer invoque la methode gestion de propriétés jusqu'à ce que le joueur ai tout hypothequé et n'est plus de maison à vendre.
+    // Dans le cas ou le joueur ne peut plus payer et ne peut plus récupérer d'argent en vendant ou hypothequant invoque la fonction elimination pour l'éliminer
     public void Payer(int montant)
     {
       if (argent - montant >= 0)
@@ -97,6 +99,8 @@ namespace Monopoly_DesignPatternA4
       }
     }
 
+    // si le joueur s'est fait éliminé en tombant sur la propriété d'un adversaire, l'adversaire recoit l'argent du joueur + ses propriétés déshypothequées
+    // si le joueur se fait éliminé par la banque (impots taxes chance communauté) dans ce cas ses propriétés sont remises en jeu 
     public void Elimination(Case caseActuelle)
     {
       if (caseActuelle.getFamille() == "autres" || caseActuelle.getProprietaire() == null)
@@ -122,11 +126,13 @@ namespace Monopoly_DesignPatternA4
       elimine = true;
     }
 
+    // methode pour recevoir de l'argent 
     public void Recevoir(int montant)
     {
       argent += montant;
     }
 
+    // methode pour acheter la case sur laquelle le joueur est tombé
     public void Acheter(Case caseActuelle)
     {
       if (argent - caseActuelle.getPrix() >= 0 && caseActuelle.getPrix() > 0)
@@ -162,6 +168,7 @@ namespace Monopoly_DesignPatternA4
 
     }
 
+    // méthode pour hypothequer une propriété
     public void Hypothequer(Case maCase)
     {
       if (maCase.getEstHypothequee() == false)
@@ -193,6 +200,7 @@ namespace Monopoly_DesignPatternA4
         Console.WriteLine("Votre carte est déjà hypothequée.");
     }
 
+    // méthode pour déshypothequer une propriété
     public void DesHypothequer(Case maCase)
     {
       if (maCase.getEstHypothequee() == true)
@@ -230,6 +238,7 @@ namespace Monopoly_DesignPatternA4
 
     }
 
+    // méthode pour construire une maison/hotel sur une propriété
     public void ConstruireMaisonOuHotel(Case maCase)
     {
       if ((argent - maCase.getPrixMaison()) >= 0)
@@ -266,6 +275,7 @@ namespace Monopoly_DesignPatternA4
         Console.WriteLine("Vous n'avez pas assez d'argent.");
     }
 
+    // méthode pour vendre a moitié prix une maison/hotel sur une propriété
     public void VendreMaisonOuHotel(Case maCase)
     {
       if (maCase.getNombreDeMaisons() > 0)
@@ -277,6 +287,7 @@ namespace Monopoly_DesignPatternA4
         Console.WriteLine("Vous n'avez pas de maisons sur cette propriété.");
     }
 
+    // méthode pour gerer ses propriétés : au choix construire/vendre des maisons/hotel, hypothequer et déshypothéquer.
     public void GererProprietes()
     {
       if (mesCases.Count > 0)
@@ -344,7 +355,6 @@ namespace Monopoly_DesignPatternA4
       }
       else
         Console.WriteLine("Vous n'avez pas encore de propriétés\n");
-
     }
 
     public override string ToString()
@@ -357,6 +367,11 @@ namespace Monopoly_DesignPatternA4
     }
 
     // comme dans notre cas le plateau est l'unique subject pouvant activer la fonction update, pour une question de lisibilité et simplicité nous avons directement prit le plateau comme argument et non ISubject subject
+    // cette méthode permet d'actualiser les observeurs (joueurs). Elle est appelée à chaque fois qu'un joueur lance les dés et tombe sur une case.
+    // propose d'acheter si possible, fait payer si la propriété est achetée, fait payer si la case est les impots ou taxe de luxe, envoie en prison si c'est le cas, donne 400M si c'est la case départ (200 + 200 bonus)
+    // si le joueur est en prison augmente le compteur du nombre de tour en prison effectué et le place en visite simple si cela fait 3 tours déjà.
+    // fait gagner ou perdre de l'argent si c'est une case chance ou caisse de communauté (elles sont identiques dans notre version de jeu).
+    // fait gagner 200M a chaque fois que le joueur passe par la case déprt
     public void Update(Plateau plateau)
     {
       if (plateau.JoueurActuel == this)
@@ -573,7 +588,6 @@ namespace Monopoly_DesignPatternA4
       }
     }
     #endregion
-
 
   }
 }

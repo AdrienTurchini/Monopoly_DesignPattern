@@ -6,39 +6,39 @@ namespace Monopoly_DesignPatternA4
   public class Plateau : ISubject
   {
     #region attributs
-    // variable locale static qui permet de referencer l'instance de ma classe soit le plateau
+    // variable locale static qui permet de referencer l'instance de ma classe soit le plateau (pour le singleton)
     private static Plateau monPlateau = null;
+    // permet de vérifier que plusieurs threads ne feront pas plusieurs plateau (pour le singleton)
     private static readonly object myLock = new object();
-    private List<Case> mesCases = new List<Case>();
-    private List<Joueur> lesJoueurs = new List<Joueur>(); // list of subscribers (observers of the subject)
-    private string state; // subject state
-    private Joueur joueurActuel;
-    int nombreDeDoubles;
-    bool rejouer;
-    int lancerDeDe;
-    int parcgratuit;
+
+    private List<Case> mesCases = new List<Case>(); // liste de toutes les cases du plateau
+    private List<Joueur> lesJoueurs = new List<Joueur>(); // list of the subscribers (observers of the subject soit les joueurs) nous avons directement mit une liste de joueurs car ce sont les seuls observeurs dans ce programme
+    private string state; // subject state, peut etre impot, taxe, prison, propriété etc. prend le type de case sur lequel tombe le joueur et permet de lancer dans update différentes actions selon les cas.
+    private Joueur joueurActuel; // joueur actuel qui joue
+    int nombreDeDoubles; // nombre de doubles d'affilés du joueur actuel
+    bool rejouer; // devient true si le joueur fait un double
+    int lancerDeDe; // valeur du dernier lancé de dé
+    int parcgratuit; // argent sur le parc gratuit (quand un joueur paye les impots etc.)
     #endregion
 
     #region constructeur
     // constructeur privé afin qu'une autre classe ne puisse pas instancier un plateau de jeu sans passer par la fonction publique
-    //qui verifie qu'il n'y a qu'une seule instance (singleton)
+    // qui verifie qu'il n'y a qu'une seule instance (singleton)
     private Plateau()
     {
+      // on instancie toutes les cases
       rejouer = false;
       nombreDeDoubles = 0;
       int position = 0;
       state = "";
-      // Construction des cartes du plateau de jeu
+      // Construction des cases du plateau de jeu
       Case caseDepart = CaseFactory.getCase(position, "autres", "Case Départ"); ;
-      //Autres caseDepart = new Autres("Case départ");
       mesCases.Add(caseDepart);
       position++;
       Case belleville = CaseFactory.getCase(position, "propriete", "marron", "Boulevard De Belleville", 60, 30, 50, 2, 10, 30, 90, 160, 250);
-      //Proporiete belleville = new Proporiete("Boulevard De Belleville", 60, 30, 50, 2, 10, 30, 90, 160, 250);
       mesCases.Add(belleville);
       position++;
 
-      //caseDepart.Suivante = belleville;
       Case commu1 = CaseFactory.getCase(position, "autres", "Caisse de Communauté");
       mesCases.Add(commu1);
       position++;
@@ -204,6 +204,8 @@ namespace Monopoly_DesignPatternA4
     #endregion
 
     #region methodes
+
+    // permet d'instancier un plateau ou de retourner le plateau déjà instancié
     public static Plateau GetPlateau()
     {
       // lock permet d'empêcher plusieurs threads différents d'utiliser plusieurs une instance de notre plateau sencé être unique en même temps
@@ -216,10 +218,12 @@ namespace Monopoly_DesignPatternA4
       }
     }
 
+    // permet d'obtenir les valeurs de deux dés afin de faire avancer le joueur.
+    // Si les deux dés ont la même valeur le joueur rejoue, si le joueur fait trois doubles d'affilé il va en prison et ne peut pas acheter la carte sur laquelle il tombe ou autre, ne gagne pas les 200M de la case départ.
+    // si le joueur est en prison et qu'il fait un double il est libéré de prison.
     Random aleatoire = new Random();
     public void LanceLesDes()
     {
-      
       int de1;
       int de2;
       
@@ -257,10 +261,7 @@ namespace Monopoly_DesignPatternA4
       }
     }
 
-    
-
-
-    // Fonction Detach du subject dans le pattern observer, nous avons remplacé l'argument IObserver joueur par Joueur joueur car seule la classe Joueur implémente l'interface 
+    // Fonction Detach du subject dans le pattern observer, nous avons remplacé l'argument IObserver observer par Joueur joueur car seule la classe Joueur implémente l'interface 
     public void JoueurElimine(Joueur joueur)
     {
       Console.WriteLine(joueur.Nom + " est éliminé du jeu");
@@ -274,6 +275,7 @@ namespace Monopoly_DesignPatternA4
       lesJoueurs.Add(joueur);
     }
 
+    // appelle la fonction update pour tous les joueurs (observers) du sujet (plateau)
     public void Notify()
     {
       foreach (Joueur j in lesJoueurs)
